@@ -12,31 +12,113 @@
 
 EthernetClient client;
 
-void setup() {
-  Ethernet.init(5);
-  Serial.begin(9600);
-  Serial.println("Ethernet Client Project");
+void setup()
+{
+    //Ethernet.init(5);
+    Serial.begin(9600);
+    Serial.println("Ethernet Client Project");
 
-  Ethernet.begin(mac, ipLocal);
-  ethernetShieldConnection();
-  ethernetCableConnection();
+    //digitalConfiguration();
+
+    //Ethernet.begin(mac); // DHCP
+    
+    Ethernet.begin(mac, IPAddress(192,168,1,90));
+    Serial.println("Ethernet begin");
+    delay(1000);
+
+    ethernetShieldConnection();
+    ethernetCableConnection();
 }
 
-void loop() {
-  
+void loop()
+{
+    sendWebRequest();
+    //testSequence();
 }
 
-void ethernetShieldConnection() {
-  if (Ethernet.hardwareStatus() == EthernetNoHardware) {
-    Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
-    while (true) {
-      delay(1);
+void ethernetShieldConnection()
+{
+    if (Ethernet.hardwareStatus() == EthernetNoHardware)
+    {
+        Serial.println("Ethernet shield was not found. Sorry, can't run without hardware. :(");
+    } else {
+        Serial.println("Ethernet shield was found. Congratulations. :)");
     }
-  }
 }
 
-void ethernetCableConnection() {
-  if (Ethernet.linkStatus() == LinkOFF) {
-    Serial.println("Ethernet cable is not connected.");
-  }
+void ethernetCableConnection()
+{
+    if (Ethernet.linkStatus() == LinkOFF)
+    {
+        Serial.println("Ethernet cable is not connected.");
+    } else {
+        Serial.println("Ethernet cable is connected.");
+    }
+}
+
+void digitalConfiguration(void)
+{
+    Serial.println("Configuración salidas digitales");
+    pinMode(LED_ETHERNET_CONNECTED, OUTPUT);
+    pinMode(LED_ETHERNET_DISCONNECTED, OUTPUT);
+    pinMode(INPUT_SOLENOID_RELAY, OUTPUT);
+    pinMode(OUTPUT_SOLENOID_RELAY, OUTPUT);
+    pinMode(INPUT_INDICATOR, OUTPUT);
+    pinMode(OUTPUT_INDICATOR, OUTPUT);
+    digitalWrite(LED_ETHERNET_CONNECTED, LOW);
+    digitalWrite(LED_ETHERNET_DISCONNECTED, LOW);
+    digitalWrite(INPUT_SOLENOID_RELAY, LOW);
+    digitalWrite(OUTPUT_SOLENOID_RELAY, LOW);
+    digitalWrite(INPUT_INDICATOR, LOW);
+    digitalWrite(OUTPUT_INDICATOR, LOW);
+}
+
+void testSequence()
+{
+    Serial.println("Inicio de secuencia");
+    digitalWrite(LED_ETHERNET_CONNECTED, HIGH);
+    delay(1500);
+    digitalWrite(LED_ETHERNET_CONNECTED, LOW);
+
+    digitalWrite(LED_ETHERNET_DISCONNECTED, HIGH);
+    delay(1500);
+    digitalWrite(LED_ETHERNET_DISCONNECTED, LOW);
+
+    digitalWrite(INPUT_SOLENOID_RELAY, HIGH);
+    delay(1500);
+    digitalWrite(INPUT_SOLENOID_RELAY, LOW);
+
+    digitalWrite(INPUT_INDICATOR, HIGH);
+    delay(1500);
+    digitalWrite(INPUT_INDICATOR, LOW);
+
+    digitalWrite(OUTPUT_SOLENOID_RELAY, HIGH);
+    delay(1500);
+    digitalWrite(OUTPUT_SOLENOID_RELAY, LOW);
+
+    digitalWrite(OUTPUT_INDICATOR, HIGH);
+    delay(1500);
+    digitalWrite(OUTPUT_INDICATOR, LOW);
+}
+
+void sendWebRequest() {
+    if (client.connect(IPAddress(192,168,1,1),9081)) {
+        Serial.println("Cliente conectado");
+        client.println(preUrl + idNumber + postUrl + " HTTP/1.0");
+        client.println("User-Agent: Escaner 1.0");
+        client.println();
+
+        while (client.connected())
+        {
+          if (client.available())
+          {
+            Serial.println("Respuesta: ");
+            String answerWeb = client.readStringUntil('\n');
+            Serial.println(answerWeb);
+          }
+        }
+    } else {
+        Serial.println("Cliente no conecta");
+    }
+
 }
