@@ -14,7 +14,7 @@ EthernetClient client;
 
 void setup()
 {
-    //Ethernet.init(5);
+    Ethernet.init(5);
     Serial.begin(9600);
     Serial.println("Ethernet Client Project");
 
@@ -22,7 +22,7 @@ void setup()
 
     //Ethernet.begin(mac); // DHCP
     
-    Ethernet.begin(mac, IPAddress(192,168,1,90));
+    Ethernet.begin(mac, IPAddress(192,168,0,92));
     Serial.println("Ethernet begin");
     delay(1000);
 
@@ -102,7 +102,7 @@ void testSequence()
 }
 
 void sendWebRequest() {
-    if (client.connect(IPAddress(192,168,1,1),9081)) {
+    if (client.connect(IPAddress(192,168,0,93),9081)) {
         Serial.println("Cliente conectado");
         client.println(preUrl + idNumber + postUrl + " HTTP/1.0");
         client.println("User-Agent: Escaner 1.0");
