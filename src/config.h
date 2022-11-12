@@ -10,6 +10,12 @@
 #define INPUT_INDICATOR 14
 #define OUTPUT_INDICATOR 13
 
+bool inputRelayState = false;
+bool outputRelayState = false;
+unsigned long currentMillisInput = 0;
+unsigned long currentMillisOutput = 0;
+const long interval = 500000;
+
 uint8_t mac[6] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 byte ipLocal[] = {192, 168, 0, 92};
 byte ipServer[] = {192, 168, 0, 93};
@@ -28,3 +34,5 @@ void sendWebRequest(String webRequest);
 void serialPortListeningInput(void);
 void serialPortListeningOutput(void);
 void turnOnRelayAndIndicator(String data, String request);
+void timerRelayInput(void);
+void timerRelayOutput(void);

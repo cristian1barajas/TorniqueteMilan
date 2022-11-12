@@ -19,9 +19,7 @@ void setup()
     Serial2.begin(115200);
     Serial.println("Ethernet Client Project");
 
-    // digitalConfiguration();
-
-    // Ethernet.begin(mac); // DHCP
+    digitalConfiguration();
 
     Ethernet.begin(mac, IPAddress(192, 168, 0, 92));
     Serial.println("Ethernet begin");
@@ -35,8 +33,8 @@ void loop()
 {
     serialPortListeningInput();
     serialPortListeningOutput();
-    //sendWebRequest();
-    //testSequence();
+    timerRelayInput();
+    timerRelayOutput();
 }
 
 void ethernetShieldConnection()
@@ -149,7 +147,7 @@ void serialPortListeningInput()
     }
 }
 
-void serialPortListeningOutput() 
+void serialPortListeningOutput()
 {
     while (Serial.available() > 0)
     {
@@ -162,16 +160,58 @@ void serialPortListeningOutput()
     }
 }
 
-void turnOnRelayAndIndicator(String data, String request) {
-    if (data.substring(0, 1) == "{") {
-        if (data.substring(11, 15) == "0000") {
-            if (request.substring(87, 88) == "E") {
+void turnOnRelayAndIndicator(String data, String request)
+{
+    if (data.substring(0, 1) == "{")
+    {
+        if (data.substring(11, 15) == "0000")
+        {
+            if (request.substring(87, 88) == "E")
+            {
                 Serial.println("Turn On Input!");
-            } else if (request.substring(87, 88) == "S") {
-                Serial.println("Turn On Output!");
+                digitalWrite(INPUT_SOLENOID_RELAY, HIGH);
+                inputRelayState = true;
             }
-        } else {
+            else if (request.substring(87, 88) == "S")
+            {
+                Serial.println("Turn On Output!");
+                digitalWrite(OUTPUT_SOLENOID_RELAY, HIGH);
+                outputRelayState = true;
+            }
+        }
+        else
+        {
             Serial.println("You do not have permissions to enter!");
+        }
+    }
+}
+
+void timerRelayInput(void)
+{
+    if (inputRelayState)
+    {
+        currentMillisInput++;
+
+        if (currentMillisInput >= interval)
+        {
+            currentMillisInput = 0;
+            digitalWrite(INPUT_SOLENOID_RELAY, LOW);
+            inputRelayState = false;
+        }
+    }
+}
+
+void timerRelayOutput(void)
+{
+    if (outputRelayState)
+    {
+        currentMillisOutput++;
+
+        if (currentMillisOutput >= interval)
+        {
+            currentMillisOutput = 0;
+            digitalWrite(OUTPUT_SOLENOID_RELAY, LOW);
+            outputRelayState = false;
         }
     }
 }
