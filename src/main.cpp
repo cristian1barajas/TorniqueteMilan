@@ -15,14 +15,15 @@ EthernetClient client;
 void setup()
 {
     Ethernet.init(5);
-    Serial.begin(9600);
+    Serial.begin(115200);
+    Serial2.begin(115200);
     Serial.println("Ethernet Client Project");
 
-    //digitalConfiguration();
+    // digitalConfiguration();
 
-    //Ethernet.begin(mac); // DHCP
-    
-    Ethernet.begin(mac, IPAddress(192,168,0,92));
+    // Ethernet.begin(mac); // DHCP
+
+    Ethernet.begin(mac, IPAddress(192, 168, 0, 92));
     Serial.println("Ethernet begin");
     delay(1000);
 
@@ -32,7 +33,9 @@ void setup()
 
 void loop()
 {
-    sendWebRequest();
+    serialPortListeningInput();
+    serialPortListeningOutput();
+    //sendWebRequest();
     //testSequence();
 }
 
@@ -41,9 +44,12 @@ void ethernetShieldConnection()
     if (Ethernet.hardwareStatus() == EthernetNoHardware)
     {
         Serial.println("Ethernet shield was not found. Sorry, can't run without hardware. :(");
-    } else {
+    }
+    else
+    {
         Serial.println("Ethernet shield was found. Congratulations. :)");
     }
+    delay(1000);
 }
 
 void ethernetCableConnection()
@@ -51,9 +57,13 @@ void ethernetCableConnection()
     if (Ethernet.linkStatus() == LinkOFF)
     {
         Serial.println("Ethernet cable is not connected.");
-    } else {
+    }
+    else
+    {
         Serial.println("Ethernet cable is connected.");
     }
+    delay(1000);
+    Serial.println("Initialization!");
 }
 
 void digitalConfiguration(void)
@@ -101,24 +111,67 @@ void testSequence()
     digitalWrite(OUTPUT_INDICATOR, LOW);
 }
 
-void sendWebRequest() {
-    if (client.connect(IPAddress(192,168,0,93),9081)) {
+void sendWebRequest(String webRequest)
+{
+    if (client.connect(IPAddress(192, 168, 0, 93), 9081))
+    {
         Serial.println("Cliente conectado");
-        client.println(preUrl + idNumber + postUrl + " HTTP/1.0");
+        client.println(webRequest);
         client.println("User-Agent: Escaner 1.0");
         client.println();
 
         while (client.connected())
         {
-          if (client.available())
-          {
-            Serial.println("Respuesta: ");
-            String answerWeb = client.readStringUntil('\n');
-            Serial.println(answerWeb);
-          }
+            if (client.available())
+            {
+                String answerWeb = client.readStringUntil('\n');
+                Serial.println(answerWeb);
+                turnOnRelayAndIndicator(answerWeb, webRequest);
+            }
         }
-    } else {
+    }
+    else
+    {
         Serial.println("Cliente no conecta");
     }
+}
 
+void serialPortListeningInput()
+{
+    while (Serial2.available() > 0)
+    {
+        idNumber = Serial2.readStringUntil('\r');
+        idNumber.trim();
+        Serial.println("\nId detected: " + idNumber);
+        String webRequest = preUrl + idNumber + postUrlInput + " HTTP/1.0";
+        Serial.println(webRequest);
+        sendWebRequest(webRequest);
+    }
+}
+
+void serialPortListeningOutput() 
+{
+    while (Serial.available() > 0)
+    {
+        idNumber = Serial.readStringUntil('\r');
+        idNumber.trim();
+        Serial.println("\nId detected: " + idNumber);
+        String webRequest = preUrl + idNumber + postUrlOutput + " HTTP/1.0";
+        Serial.println(webRequest);
+        sendWebRequest(webRequest);
+    }
+}
+
+void turnOnRelayAndIndicator(String data, String request) {
+    if (data.substring(0, 1) == "{") {
+        if (data.substring(11, 15) == "0000") {
+            if (request.substring(87, 88) == "E") {
+                Serial.println("Turn On Input!");
+            } else if (request.substring(87, 88) == "S") {
+                Serial.println("Turn On Output!");
+            }
+        } else {
+            Serial.println("You do not have permissions to enter!");
+        }
+    }
 }

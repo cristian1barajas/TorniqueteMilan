@@ -11,17 +11,20 @@
 #define OUTPUT_INDICATOR 13
 
 uint8_t mac[6] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
-//byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 byte ipLocal[] = {192, 168, 0, 92};
 byte ipServer[] = {192, 168, 0, 93};
 const int portRemote = 9081;
 
 String preUrl = "GET /api/v1/registrovisitas/visitantes/validarAcceso?codigoBuscar=";
-String postUrl = "&operacion=E&estacion=P-03&lugar=5";
-String idNumber = "1031124702";
+String postUrlInput = "&operacion=E&estacion=P-03&lugar=5";
+String postUrlOutput = "&operacion=S&estacion=P-03&lugar=5";
+String idNumber = "";
 
 void ethernetShieldConnection(void);
 void ethernetCableConnection(void);
 void digitalConfiguration(void);
 void testSequence(void);
-void sendWebRequest(void);
+void sendWebRequest(String webRequest);
+void serialPortListeningInput(void);
+void serialPortListeningOutput(void);
+void turnOnRelayAndIndicator(String data, String request);
