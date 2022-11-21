@@ -14,7 +14,7 @@ bool inputRelayState = false;
 bool outputRelayState = false;
 unsigned long currentMillisInput = 0;
 unsigned long currentMillisOutput = 0;
-const long interval = 500000;
+const long interval = 10000;
 
 uint8_t mac[6] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 byte ipLocal[] = {192, 168, 0, 92};
@@ -36,3 +36,4 @@ void serialPortListeningOutput(void);
 void turnOnRelayAndIndicator(String data, String request);
 void timerRelayInput(void);
 void timerRelayOutput(void);
+void ethernetCableConnectionStatus(void);

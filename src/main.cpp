@@ -21,7 +21,7 @@ void setup()
 
     digitalConfiguration();
 
-    Ethernet.begin(mac, IPAddress(192, 168, 0, 92));
+    Ethernet.begin(mac, IPAddress(192, 168, 0, 92)); // IPv4 Host Address
     Serial.println("Ethernet begin");
     delay(1000);
 
@@ -35,6 +35,7 @@ void loop()
     serialPortListeningOutput();
     timerRelayInput();
     timerRelayOutput();
+    ethernetCableConnectionStatus();
 }
 
 void ethernetShieldConnection()
@@ -59,6 +60,7 @@ void ethernetCableConnection()
     else
     {
         Serial.println("Ethernet cable is connected.");
+        digitalWrite(LED_ETHERNET_CONNECTED, HIGH);
     }
     delay(1000);
     Serial.println("Initialization!");
@@ -111,7 +113,7 @@ void testSequence()
 
 void sendWebRequest(String webRequest)
 {
-    if (client.connect(IPAddress(192, 168, 0, 93), 9081))
+    if (client.connect(IPAddress(192, 168, 0, 80), 9081))
     {
         Serial.println("Cliente conectado");
         client.println(webRequest);
@@ -170,12 +172,14 @@ void turnOnRelayAndIndicator(String data, String request)
             {
                 Serial.println("Turn On Input!");
                 digitalWrite(INPUT_SOLENOID_RELAY, HIGH);
+                digitalWrite(INPUT_INDICATOR, HIGH);
                 inputRelayState = true;
             }
             else if (request.substring(87, 88) == "S")
             {
                 Serial.println("Turn On Output!");
                 digitalWrite(OUTPUT_SOLENOID_RELAY, HIGH);
+                digitalWrite(OUTPUT_INDICATOR, HIGH);
                 outputRelayState = true;
             }
         }
@@ -196,6 +200,7 @@ void timerRelayInput(void)
         {
             currentMillisInput = 0;
             digitalWrite(INPUT_SOLENOID_RELAY, LOW);
+            digitalWrite(INPUT_INDICATOR, LOW);
             inputRelayState = false;
         }
     }
@@ -211,7 +216,19 @@ void timerRelayOutput(void)
         {
             currentMillisOutput = 0;
             digitalWrite(OUTPUT_SOLENOID_RELAY, LOW);
+            digitalWrite(OUTPUT_INDICATOR, LOW);
             outputRelayState = false;
         }
+    }
+}
+
+void ethernetCableConnectionStatus(void) {
+    if (Ethernet.linkStatus() == LinkOFF)
+    {
+        digitalWrite(LED_ETHERNET_CONNECTED, LOW);
+    }
+    else
+    {
+        digitalWrite(LED_ETHERNET_CONNECTED, HIGH);
     }
 }
