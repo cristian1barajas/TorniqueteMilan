@@ -76,34 +76,6 @@ void digitalConfiguration(void)
     digitalWrite(OUTPUT_INDICATOR, LOW);
 }
 
-void testSequence()
-{
-    Serial.println("Inicio de secuencia");
-    digitalWrite(LED_ETHERNET_CONNECTED, HIGH);
-    delay(1500);
-    digitalWrite(LED_ETHERNET_CONNECTED, LOW);
-
-    digitalWrite(LED_ETHERNET_DISCONNECTED, HIGH);
-    delay(1500);
-    digitalWrite(LED_ETHERNET_DISCONNECTED, LOW);
-
-    digitalWrite(INPUT_SOLENOID_RELAY, HIGH);
-    delay(1500);
-    digitalWrite(INPUT_SOLENOID_RELAY, LOW);
-
-    digitalWrite(INPUT_INDICATOR, HIGH);
-    delay(1500);
-    digitalWrite(INPUT_INDICATOR, LOW);
-
-    digitalWrite(OUTPUT_SOLENOID_RELAY, HIGH);
-    delay(1500);
-    digitalWrite(OUTPUT_SOLENOID_RELAY, LOW);
-
-    digitalWrite(OUTPUT_INDICATOR, HIGH);
-    delay(1500);
-    digitalWrite(OUTPUT_INDICATOR, LOW);
-}
-
 void sendWebRequest(String webRequest)
 {
     if (client.connect(ipServer, portRemote)) // IPv4 Server Address

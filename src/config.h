@@ -29,7 +29,6 @@ String idNumber = "";
 void ethernetShieldConnection(void);
 void ethernetCableConnection(void);
 void digitalConfiguration(void);
-void testSequence(void);
 void sendWebRequest(String webRequest);
 void serialPortListeningInput(void);
 void serialPortListeningOutput(void);
