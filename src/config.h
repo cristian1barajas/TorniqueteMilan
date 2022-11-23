@@ -14,11 +14,11 @@ bool inputRelayState = false;
 bool outputRelayState = false;
 unsigned long currentMillisInput = 0;
 unsigned long currentMillisOutput = 0;
-const long interval = 10000;
+const long interval = 5000;
 
 uint8_t mac[6] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 byte ipLocal[] = {192, 168, 0, 92};
-byte ipServer[] = {192, 168, 0, 93};
+byte ipServer[] = {192, 168, 0, 80};
 const int portRemote = 9081;
 
 String preUrl = "GET /api/v1/registrovisitas/visitantes/validarAcceso?codigoBuscar=";

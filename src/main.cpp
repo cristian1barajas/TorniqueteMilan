@@ -21,7 +21,7 @@ void setup()
 
     digitalConfiguration();
 
-    Ethernet.begin(mac, IPAddress(192, 168, 0, 92)); // IPv4 Host Address
+    Ethernet.begin(mac, ipLocal); // IPv4 Host Address
     Serial.println("Ethernet begin");
     delay(1000);
 
@@ -40,30 +40,23 @@ void loop()
 
 void ethernetShieldConnection()
 {
-    if (Ethernet.hardwareStatus() == EthernetNoHardware)
+    while (Ethernet.hardwareStatus() == EthernetNoHardware)
     {
         Serial.println("Ethernet shield was not found. Sorry, can't run without hardware. :(");
     }
-    else
-    {
-        Serial.println("Ethernet shield was found. Congratulations. :)");
-    }
-    delay(1000);
+    Serial.println("Ethernet shield was found. Congratulations. :)");
 }
 
 void ethernetCableConnection()
 {
-    if (Ethernet.linkStatus() == LinkOFF)
-    {
-        Serial.println("Ethernet cable is not connected.");
+    while (Ethernet.linkStatus() == LinkOFF) {
+        Serial.println("Ethernet cable is not connected. Trying to connect...");
+        digitalWrite(LED_ETHERNET_DISCONNECTED, HIGH);
     }
-    else
-    {
-        Serial.println("Ethernet cable is connected.");
-        digitalWrite(LED_ETHERNET_CONNECTED, HIGH);
-    }
-    delay(1000);
-    Serial.println("Initialization!");
+    Serial.println("Ethernet cable is connected.");
+    digitalWrite(LED_ETHERNET_CONNECTED, HIGH);
+    digitalWrite(LED_ETHERNET_DISCONNECTED, LOW);
+    Serial.println("Successful initialization!");
 }
 
 void digitalConfiguration(void)
@@ -113,7 +106,7 @@ void testSequence()
 
 void sendWebRequest(String webRequest)
 {
-    if (client.connect(IPAddress(192, 168, 0, 80), 9081))
+    if (client.connect(ipServer, portRemote)) // IPv4 Server Address
     {
         Serial.println("Cliente conectado");
         client.println(webRequest);
@@ -186,6 +179,13 @@ void turnOnRelayAndIndicator(String data, String request)
         else
         {
             Serial.println("You do not have permissions to enter!");
+            digitalWrite(LED_ETHERNET_DISCONNECTED, HIGH);
+            delay(200);
+            digitalWrite(LED_ETHERNET_DISCONNECTED, LOW);
+            delay(200);
+            digitalWrite(LED_ETHERNET_DISCONNECTED, HIGH);
+            delay(200);
+            digitalWrite(LED_ETHERNET_DISCONNECTED, LOW);
         }
     }
 }
@@ -226,9 +226,11 @@ void ethernetCableConnectionStatus(void) {
     if (Ethernet.linkStatus() == LinkOFF)
     {
         digitalWrite(LED_ETHERNET_CONNECTED, LOW);
+        digitalWrite(LED_ETHERNET_DISCONNECTED, HIGH);
     }
     else
     {
         digitalWrite(LED_ETHERNET_CONNECTED, HIGH);
+        digitalWrite(LED_ETHERNET_DISCONNECTED, LOW);
     }
 }
