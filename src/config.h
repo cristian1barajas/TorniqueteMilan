@@ -1,14 +1,14 @@
 #include <Arduino.h>
 #include <UIPEthernet.h>
 
-#define LED_ETHERNET_CONNECTED 26
-#define LED_ETHERNET_DISCONNECTED 25
+#define LED_ETHERNET_CONNECTED 14
+#define LED_ETHERNET_DISCONNECTED 27
 
-#define INPUT_SOLENOID_RELAY 27
-#define OUTPUT_SOLENOID_RELAY 12
+#define INPUT_SOLENOID_RELAY 13
+#define OUTPUT_SOLENOID_RELAY 26
 
-#define INPUT_INDICATOR 14
-#define OUTPUT_INDICATOR 13
+#define INPUT_INDICATOR 12
+#define OUTPUT_INDICATOR 25
 
 bool inputRelayState = false;
 bool outputRelayState = false;
