@@ -1,14 +1,15 @@
 #include <Arduino.h>
 #include <UIPEthernet.h>
 
-#define LED_ETHERNET_CONNECTED 14
-#define LED_ETHERNET_DISCONNECTED 27
+// 
+#define LED_ETHERNET_CONNECTED 14 // Salida Autorizado
+#define LED_ETHERNET_DISCONNECTED 27 // Entrada No autorizado
 
 #define INPUT_SOLENOID_RELAY 13
 #define OUTPUT_SOLENOID_RELAY 26
 
-#define INPUT_INDICATOR 12
-#define OUTPUT_INDICATOR 25
+#define INPUT_INDICATOR 12 // Salida No Autorizado
+#define OUTPUT_INDICATOR 25 // Entrada Autorizado
 
 bool inputRelayState = false;
 bool outputRelayState = false;
