@@ -66,14 +66,18 @@ void digitalConfiguration(void)
     pinMode(LED_ETHERNET_DISCONNECTED, OUTPUT);
     pinMode(INPUT_SOLENOID_RELAY, OUTPUT);
     pinMode(OUTPUT_SOLENOID_RELAY, OUTPUT);
-    pinMode(INPUT_INDICATOR, OUTPUT);
-    pinMode(OUTPUT_INDICATOR, OUTPUT);
+    pinMode(INPUT_INDICATOR_ENABLE, OUTPUT);
+    pinMode(INPUT_INDICATOR_DISABLE, OUTPUT);
+    pinMode(OUTPUT_INDICATOR_ENABLE, OUTPUT);
+    pinMode(OUTPUT_INDICATOR_DISABLE, OUTPUT);
     digitalWrite(LED_ETHERNET_CONNECTED, LOW);
     digitalWrite(LED_ETHERNET_DISCONNECTED, LOW);
     digitalWrite(INPUT_SOLENOID_RELAY, LOW);
     digitalWrite(OUTPUT_SOLENOID_RELAY, LOW);
-    digitalWrite(INPUT_INDICATOR, LOW);
-    digitalWrite(OUTPUT_INDICATOR, LOW);
+    digitalWrite(INPUT_INDICATOR_ENABLE, LOW);
+    digitalWrite(INPUT_INDICATOR_DISABLE, LOW);
+    digitalWrite(OUTPUT_INDICATOR_ENABLE, LOW);
+    digitalWrite(OUTPUT_INDICATOR_DISABLE, LOW);
 }
 
 void sendWebRequest(String webRequest)
@@ -137,27 +141,51 @@ void turnOnRelayAndIndicator(String data, String request)
             {
                 Serial.println("Turn On Input!");
                 digitalWrite(INPUT_SOLENOID_RELAY, HIGH);
-                digitalWrite(INPUT_INDICATOR, HIGH);
+                digitalWrite(INPUT_INDICATOR_ENABLE, HIGH);
                 inputRelayState = true;
             }
             else if (request.substring(87, 88) == "S")
             {
                 Serial.println("Turn On Output!");
                 digitalWrite(OUTPUT_SOLENOID_RELAY, HIGH);
-                digitalWrite(OUTPUT_INDICATOR, HIGH);
+                digitalWrite(OUTPUT_INDICATOR_ENABLE, HIGH);
                 outputRelayState = true;
             }
         }
-        else
+        else if (data.substring(11, 15) == "1000") 
         {
-            Serial.println("You do not have permissions to enter!");
-            digitalWrite(LED_ETHERNET_DISCONNECTED, HIGH);
-            delay(200);
-            digitalWrite(LED_ETHERNET_DISCONNECTED, LOW);
-            delay(200);
-            digitalWrite(LED_ETHERNET_DISCONNECTED, HIGH);
-            delay(200);
-            digitalWrite(LED_ETHERNET_DISCONNECTED, LOW);
+            if (request.substring(87, 88) == "E")
+            {
+                Serial.println("You do not have permissions to enter!");
+                digitalWrite(INPUT_INDICATOR_DISABLE, HIGH);
+                delay(TIME);
+                digitalWrite(INPUT_INDICATOR_DISABLE, LOW);
+                delay(TIME);
+                digitalWrite(INPUT_INDICATOR_DISABLE, HIGH);
+                delay(TIME);
+                digitalWrite(INPUT_INDICATOR_DISABLE, LOW);
+                delay(TIME);
+                digitalWrite(INPUT_INDICATOR_DISABLE, HIGH);
+                delay(TIME);
+                digitalWrite(INPUT_INDICATOR_DISABLE, LOW);
+                delay(TIME);
+            }
+            else if (request.substring(87, 88) == "S")
+            {
+                Serial.println("You do not have permissions to leave!");
+                digitalWrite(OUTPUT_INDICATOR_DISABLE, HIGH);
+                delay(TIME);
+                digitalWrite(OUTPUT_INDICATOR_DISABLE, LOW);
+                delay(TIME);
+                digitalWrite(OUTPUT_INDICATOR_DISABLE, HIGH);
+                delay(TIME);
+                digitalWrite(OUTPUT_INDICATOR_DISABLE, LOW);
+                delay(TIME);
+                digitalWrite(OUTPUT_INDICATOR_DISABLE, HIGH);
+                delay(TIME);
+                digitalWrite(OUTPUT_INDICATOR_DISABLE, LOW);
+                delay(TIME);
+            }
         }
     }
 }
@@ -172,7 +200,7 @@ void timerRelayInput(void)
         {
             currentMillisInput = 0;
             digitalWrite(INPUT_SOLENOID_RELAY, LOW);
-            digitalWrite(INPUT_INDICATOR, LOW);
+            digitalWrite(INPUT_INDICATOR_ENABLE, LOW);
             inputRelayState = false;
         }
     }
@@ -188,7 +216,7 @@ void timerRelayOutput(void)
         {
             currentMillisOutput = 0;
             digitalWrite(OUTPUT_SOLENOID_RELAY, LOW);
-            digitalWrite(OUTPUT_INDICATOR, LOW);
+            digitalWrite(OUTPUT_INDICATOR_ENABLE, LOW);
             outputRelayState = false;
         }
     }
