@@ -21,14 +21,21 @@ unsigned long currentMillisInput = 0;
 unsigned long currentMillisOutput = 0;
 const long interval = 5000;
 
+unsigned long previousMillis;
+//unsigned long resetInterval = 60000; // Un minuto
+//unsigned long resetInterval = 1800000; // Media hora
+//unsigned long resetInterval = 3600000; // Una hora
+unsigned long resetInterval = 43200000; // 12 horas
+//unsigned long resetInterval = 86400000; // 24 horas
+
 uint8_t mac[6] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
-byte ipLocal[] = {192, 168, 0, 92};
-byte ipServer[] = {192, 168, 0, 80};
+byte ipLocal[] = {192, 168, 1, 205};
+byte ipServer[] = {192, 168, 1, 200};
 const int portRemote = 9081;
 
 String preUrl = "GET /api/v1/registrovisitas/visitantes/validarAcceso?codigoBuscar=";
-String postUrlInput = "&operacion=E&estacion=P-03&lugar=5";
-String postUrlOutput = "&operacion=S&estacion=P-03&lugar=5";
+String postUrlInput = "&operacion=E&estacion=P-MB&lugar=5";
+String postUrlOutput = "&operacion=S&estacion=P-MB&lugar=5";
 String idNumber = "";
 
 void ethernetShieldConnection(void);
@@ -41,3 +48,4 @@ void turnOnRelayAndIndicator(String data, String request);
 void timerRelayInput(void);
 void timerRelayOutput(void);
 void ethernetCableConnectionStatus(void);
+void reset();

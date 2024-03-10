@@ -27,6 +27,8 @@ void setup()
 
     ethernetShieldConnection();
     ethernetCableConnection();
+
+    previousMillis = millis();
 }
 
 void loop()
@@ -36,6 +38,7 @@ void loop()
     timerRelayInput();
     timerRelayOutput();
     ethernetCableConnectionStatus();
+    reset();
 }
 
 void ethernetShieldConnection()
@@ -141,15 +144,37 @@ void turnOnRelayAndIndicator(String data, String request)
             {
                 Serial.println("Turn On Input!");
                 digitalWrite(INPUT_SOLENOID_RELAY, HIGH);
-                digitalWrite(INPUT_INDICATOR_ENABLE, HIGH);
                 inputRelayState = true;
+                digitalWrite(INPUT_INDICATOR_ENABLE, HIGH);
+                delay(TIME);
+                digitalWrite(INPUT_INDICATOR_ENABLE, LOW);
+                delay(TIME);
+                digitalWrite(INPUT_INDICATOR_ENABLE, HIGH);
+                delay(TIME);
+                digitalWrite(INPUT_INDICATOR_ENABLE, LOW);
+                delay(TIME);
+                digitalWrite(INPUT_INDICATOR_ENABLE, HIGH);
+                delay(TIME);
+                digitalWrite(INPUT_INDICATOR_ENABLE, LOW);
+                delay(TIME);
             }
             else if (request.substring(87, 88) == "S")
             {
                 Serial.println("Turn On Output!");
                 digitalWrite(OUTPUT_SOLENOID_RELAY, HIGH);
-                digitalWrite(OUTPUT_INDICATOR_ENABLE, HIGH);
                 outputRelayState = true;
+                digitalWrite(OUTPUT_INDICATOR_ENABLE, HIGH);
+                delay(TIME);
+                digitalWrite(OUTPUT_INDICATOR_ENABLE, LOW);
+                delay(TIME);
+                digitalWrite(OUTPUT_INDICATOR_ENABLE, HIGH);
+                delay(TIME);
+                digitalWrite(OUTPUT_INDICATOR_ENABLE, LOW);
+                delay(TIME);
+                digitalWrite(OUTPUT_INDICATOR_ENABLE, HIGH);
+                delay(TIME);
+                digitalWrite(OUTPUT_INDICATOR_ENABLE, LOW);
+                delay(TIME);
             }
         }
         else if (data.substring(11, 15) == "1000") 
@@ -200,7 +225,6 @@ void timerRelayInput(void)
         {
             currentMillisInput = 0;
             digitalWrite(INPUT_SOLENOID_RELAY, LOW);
-            digitalWrite(INPUT_INDICATOR_ENABLE, LOW);
             inputRelayState = false;
         }
     }
@@ -216,7 +240,6 @@ void timerRelayOutput(void)
         {
             currentMillisOutput = 0;
             digitalWrite(OUTPUT_SOLENOID_RELAY, LOW);
-            digitalWrite(OUTPUT_INDICATOR_ENABLE, LOW);
             outputRelayState = false;
         }
     }
@@ -233,4 +256,12 @@ void ethernetCableConnectionStatus(void) {
         digitalWrite(LED_ETHERNET_CONNECTED, HIGH);
         digitalWrite(LED_ETHERNET_DISCONNECTED, LOW);
     }
+}
+
+void reset() {
+  if ((millis() - previousMillis) > resetInterval)
+  {
+    ESP.restart();
+    previousMillis = millis();
+  }
 }
